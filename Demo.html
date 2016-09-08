@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>宝船网地图模块</title>
+    <link rel="stylesheet" href="plugin/ol3/ol.css" />
+    <link rel="stylesheet" href="plugin/ol3/ScaleLine/scaleline.css" />
+    <link rel="stylesheet" href="plugin/ol3/PanZoom/ol3pz.css" />
+    <link rel="stylesheet" href="plugin/bootstrap/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="assert/css/gis.css" type="text/css">
+    <link rel="stylesheet" href="plugin/ol3/PanZoom/resources/layout.css" type="text/css">
+    <link rel="stylesheet" href="plugin/bootstrap-table/bootstrap-table.min.css" type="text/css">
+
+    <script type="text/javascript" src="plugin/ol3/ol-debug.js"></script>
+    <script src="plugin/ol3/ScaleLine/scaleline.js"></script>
+    <script src="plugin/ol3/PanZoom/ol3pz.js"></script>
+    <script src="plugin/jquery-1.10.2.js"></script>
+	<script src="plugin/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="plugin/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="plugin/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+    <script src="plugin/bootstrap-table/extensions/export/tableExport.js"></script>
+    <script src="plugin/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="plugin/bootstrap/js/bootstrap-dialog.min.js"></script>
+	<script src="assert/js/gis_toolbar.js"></script>
+    <script src="assert/js/Style.js"></script>
+    <script src="assert/js/Layer.js"></script>
+    <script src="assert/js/IMap.js"></script>
+    <script src="assert/js/map.js"></script>
+	<script src="assert/js/OverLay.js"></script>
+</head>
+<body onload="init()">
+    <div id="map">
+        <div id="popup" class="ol-popup">
+            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <div id="popup-content"></div>
+        </div>
+        <div id="measure" class="measuretooltip tooltip-measure"></div>
+        <div id="measurehelp" class="measuretooltip"></div>
+        <div id="toolbar" class="btn-group">
+            <button class="btnClass" id="btnPan" style="background-image: url(assert/image/Pan.png);" data-placement="bottom" data-original-title="平移"></button>
+            <button class="btnClass" id="btnMeasure" style="background-image: url(assert/image/Measure.png);" data-placement="bottom" data-original-title="测距"></button>
+            <button class="btnClass" id="btnMeasureArea" style="background-image: url(assert/image/MeasureArea.png);" data-placement="bottom" data-original-title="测面"></button>
+        </div>
+    </div>
+</body>
+</html>
