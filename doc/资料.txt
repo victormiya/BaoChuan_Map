@@ -1,0 +1,8 @@
+台风列表：
+http://typhoon.myships.com:8080/ShipSynchServer/getNewestTyphoons
+
+具体台风数据：
+http://typhoon.myships.com:8080/ShipSynchServer/getAllTyphoonByStormId?stormId=833
+
+http://112.124.12.97:8080/Typhoon/public/index.html 展示的比我们的http://www.myships.com/myships/好，
+你可以参考一下，台风数据字段的具体含义我这边没有，你先自己研究一下吧，有问题我们再商量。
