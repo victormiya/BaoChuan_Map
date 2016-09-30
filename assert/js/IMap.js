@@ -52,15 +52,19 @@ function measureDistance()
 //绘制标记
 function drawMark()
 {
-
+    var draw =new ol.interaction.Draw({
+        type:'Polygon',
+        source:vectorSource
+    });
+    map.addInteraction(draw);
 }
 
 //屏幕截图
 function mapPrint()
 {
 
-}
 
+}
 //更新特定船舶实时位置
 function updateShipLocate(shipid,locate)
 {
@@ -68,12 +72,15 @@ function updateShipLocate(shipid,locate)
 }
 
 //显示某些船
-function showShipbyCodes(shipCodes){
+function showShipbyCodes(shipCodes)
+{
 
+    vectorSource.addFeatures();
 }
 //隐藏某些船舶
-function hideShipbyCodes(shipCodes){
-
+function hideShipbyCodes(shipCodes)
+{
+    vectorSource.removeFeature();
 }
 
 
