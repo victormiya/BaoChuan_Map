@@ -1,5 +1,7 @@
 //工具
 
+var tooltipCoord;
+
 //测量
 function measureLength() {
     map.on('pointermove', measureMoveHandler);
@@ -10,8 +12,11 @@ function measureArea() {
     map.on('pointermove', measureMoveHandler);
     addMeasureinteraction('Polygon');
 }
-
-
+//测量电子方位角
+function measureAzimuth(){
+    map.on('pointermove', measureMoveHandler);
+    addMeasureinteraction('Circle');
+}
 
 //地图输出
 function print()
@@ -27,39 +32,35 @@ function print()
     }
 }
 
-
-
-
-
-
-
-
-
-
 var measureVar={
     wgs84Sphere:new ol.Sphere(6378137),
     sketch:null,
     geodesic:false,
     continuePolygonMsg:'点击开始绘制面',
-    continueLineMsg:'点击开始绘制线'
+    continueLineMsg:'点击开始绘制线',
+    continueCircleMsg:'点击开始绘制电子方位'
 };
 var measureMoveHandler = function(evt) {
     if (evt.dragging) {
         return;
     }
     var helpMsg = '点击开始绘制';
-    var tooltipCoord = evt.coordinate;
+    tooltipCoord = evt.coordinate;
     if (measureVar.sketch) {
         var output;
         var geom = (measureVar.sketch.getGeometry());
         if (geom instanceof ol.geom.Polygon) {
-            output = formatArea( (geom));
+            output = formatArea( geom);
             helpMsg = measureVar.continuePolygonMsg;
             tooltipCoord = geom.getInteriorPoint().getCoordinates();
         } else if (geom instanceof ol.geom.LineString) {
-            output = formatLength((geom));
+            output = formatLength(geom);
             helpMsg = measureVar.continueLineMsg;
             tooltipCoord = geom.getLastCoordinate();
+        }
+        else if(geom instanceof ol.geom.Circle) {
+            output = formatAzimuth(geom);
+            helpMsg = measureVar.continueCircleMsg;
         }
         showMeasureResult(output,tooltipCoord);
     }
@@ -79,7 +80,7 @@ function showMeasureHelp(innerHTML,coordinate)
     mapElement.measureHelpTooltipElement.innerHTML= innerHTML;
     mapOverLay.measureHelpTooltip.setPosition(coordinate);
 }
-//清楚测量结果
+//清除测量结果
 function clearMeaure()
 {
     Source.measureSource.clear();
@@ -145,38 +146,6 @@ var formatArea = function(polygon) {
     }
     return output;
 };
-function createHelpTooltip() {
-    if (helpTooltipElement) {
-        helpTooltipElement.parentNode.removeChild(helpTooltipElement);
-    }
-    helpTooltipElement = document.createElement('div');
-    helpTooltipElement.className = 'tooltip hidden';
-    helpTooltip = new ol.Overlay({
-        element: helpTooltipElement,
-        offset: [15, 0],
-        positioning: 'center-left'
-    });
-    map.addOverlay(helpTooltip);
-}
-
-
-
-function createMeasureTooltip() {
-    if (measureTooltipElement) {
-        measureTooltipElement.parentNode.removeChild(measureTooltipElement);
-    }
-    measureTooltipElement = document.createElement('div');
-    measureTooltipElement.className = 'tooltip tooltip-measure';
-    measureTooltip = new ol.Overlay({
-        element: measureTooltipElement,
-        offset: [0, -15],
-        positioning: 'bottom-center'
-    });
-    map.addOverlay(measureTooltip);
-}
-
-
-
 
 //测量开始
 function measureStart(e)
@@ -191,11 +160,18 @@ function measureEnd(e)
 {
     mapElement.measureTooltipElement.className = 'measuretooltip tooltip-static';
     mapOverLay.measureTooltip.setOffset([0, -7]);
-    measureVar.sketch = null;
+    var geom=e.feature.getGeometry();
+    if(geom instanceof ol.geom.Circle) {
+        var center=geom.getCenter();
+        var radiusLine=new ol.geom.LineString([center,tooltipCoord]);
+        var radiusFeature=new ol.Feature({
+            geometry: radiusLine
+        })
+        radiusFeature.setStyle(measureStyle);
+        Source.measureSource.addFeature(radiusFeature);
+    }
+        measureVar.sketch = null;
 }
-
-
-
 
 //根据查询条件选项键值对，构造查询条件
 function getCQLFilter(options)
@@ -226,4 +202,36 @@ function getCQLFilter(options)
     }
     filter =filter.join(' And ');
     return filter;
+}
+
+function formatAzimuth(geom) {
+    var P1=geom.getCenter();
+    var P2=tooltipCoord;
+    var X1=P1[0];
+    var Y1=P1[1];
+    var X2=P2[0];
+    var Y2=P2[1];
+    var deltaX=X2-X1;
+    var deltaY=Y2-Y1;
+    var azimuth=Math.atan(deltaY/deltaX);
+    azimuth=180*azimuth/Math.PI;
+    var last_azimuth=0;
+    if(deltaX>0)
+        last_azimuth=90-azimuth;
+    else if(deltaX<0)
+        last_azimuth=270-azimuth;
+    else if(deltaX==0&&deltaY<0)
+        last_azimuth=180;
+    last_azimuth = parseFloat(last_azimuth).toFixed(4);
+
+    P1 = ol.proj.transform(P1, sourceProj, 'EPSG:4326');
+    P2 = ol.proj.transform(P2, sourceProj, 'EPSG:4326');
+    var output_distance=wgs84Sphere.haversineDistance(P1, P2);
+    output_distance=0.5399568*output_distance;
+    output_distance = parseFloat(output_distance).toFixed(2);
+
+    var output="距离:"+output_distance+'海里'+'<br/>'+"方位:"+last_azimuth+'°<a onclick=clearMeaure() onmouseover="changeMouseStyle(true)" onmouseout="changeMouseStyle(false)">✖</a>';
+    return output;
+    //mapElement.measureTooltipElement.innerHTML = output;
+    //mapOverLay.measureTooltip.setPosition(lastcoord);
 }
