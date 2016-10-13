@@ -16,7 +16,13 @@ function overlayInit()
         offset: [15, 0],
         positioning: 'center-left'
     });
-	
+	//台风
+    mapElement.taifengElement = document.getElementById('taifeng');
+    mapOverLay.taifeng = new ol.Overlay({
+        element: mapElement.taifengElement,
+        //offset: [0, -15],
+        positioning: 'center-center'
+    });
 
    var popupElement = document.getElementById('popup');
     mapElement.popupContentElement = document.getElementById('popup-content');

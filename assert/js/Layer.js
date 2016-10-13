@@ -4,7 +4,7 @@ function layerinit()
 {
     //街道图
     Layer.streetLayer=new ol.layer.Tile({
-        visible: false,
+        visible: true,
         source: new ol.source.XYZ({
             url: 'http://www.google.cn/maps/vt?pb=!1m5!1m4!1i{z}!2i{x}!3i{y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2szh-CN!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965'
         })
@@ -27,7 +27,7 @@ function layerinit()
     })
     //海图
     Layer.haiTuLayer= new ol.layer.Tile({
-        visible:true,
+        visible:false,
         source: new ol.source.XYZ({
             tileUrlFunction: function (xyz, obj1, obj2) {
                 if (!xyz) {
@@ -59,7 +59,6 @@ function layerinit()
             }),
             stroke: new ol.style.Stroke({
                 color: 'rgba(255, 0, 0)',
-                lineDash: [10, 10],
                 width: 2
             })
         })
@@ -69,10 +68,46 @@ function layerinit()
     //矢量船图层
 
 
-
+    Layer.ship = new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+            url: 'http://112.126.89.175:8080/geoserver/gwc/service/wms',
+            //url: 'http://112.126.89.175:8080/geoserver/gwc/service/wms',
+            params: {'FORMAT': 'image/png',
+                'VERSION': '1.1.1',
+                tiled: true,
+                STYLES: '',
+                LAYERS: 'ships:ta_pos_latest_new',
+            }
+        })
+    });
 }
 
 //余位补齐
 function padLeft(num, val) {
     return (new Array(num).join('0') + val).slice(-num);
+}
+
+function test()
+{
+    $.ajax({
+        url:'a.json',
+        type:'get',
+        success:function(data) {
+            var line=[];
+            //='0'的是当前卫星点
+            var arr=data.result.filter(function(item,index){
+                return item.timeDif==='0'
+            });
+            //>0是预报点
+            for(var i=0;i<arr.length;i++) {
+                line.push(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
+                mapOverLay.taifeng.setPosition(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
+            }
+            var feature=new ol.Feature({
+                geometry:new ol.geom.LineString(line)
+            });
+            Source.drawSource.addFeature(feature);
+        }
+    });
+
 }
