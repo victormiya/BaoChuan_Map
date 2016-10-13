@@ -109,8 +109,8 @@
 
 
 #taifeng {
-    width: 100px;
-    height: 100px;
+    width: 48px;
+    height: 48px;
     background: url(../image/taifeng.png);
     animation:change linear 2s infinite;
     -moz-animation:change linear 2s infinite; /* Firefox */

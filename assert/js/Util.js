@@ -2,24 +2,21 @@
 
 var tooltipCoord;
 
-//测量
-function measureLength() {
-    map.on('pointermove', measureMoveHandler);
-    addMeasureinteraction('LineString');
-}
-//测面
-function measureArea() {
-    map.on('pointermove', measureMoveHandler);
-    addMeasureinteraction('Polygon');
-}
-//测量电子方位角
-function measureAzimuth(){
-    map.on('pointermove', measureMoveHandler);
-    addMeasureinteraction('Circle');
+
+function measureinit()
+{
+    //移除测量移动提示
+    map.un('pointermove', measureMoveHandler);
+    //移除测量
+    map.removeInteraction(measureinteraction);
+    mapOverLay.measureHelpTooltip.setPosition(undefined);
 }
 
+
+
+
 //地图输出
-function print()
+function _print()
 {
     var exportPNGElement=document.getElementById("export-png");
     if ('download' in exportPNGElement) {
@@ -111,7 +108,7 @@ var formatLength = function(line) {
 
         }
     } else {
-        length = Math.round(line.getLength() * 100) / 100;
+        length = line.getLength();
     }
     var output;
     if (length > 1000) {
@@ -223,13 +220,11 @@ function formatAzimuth(geom) {
     else if(deltaX==0&&deltaY<0)
         last_azimuth=180;
     last_azimuth = parseFloat(last_azimuth).toFixed(4);
-
-    P1 = ol.proj.transform(P1, sourceProj, 'EPSG:4326');
-    P2 = ol.proj.transform(P2, sourceProj, 'EPSG:4326');
-    var output_distance=wgs84Sphere.haversineDistance(P1, P2);
-    output_distance=0.5399568*output_distance;
+    P1=ol.proj.toLonLat(P1);
+    P2=ol.proj.toLonLat(P2);
+    var output_distance=measureVar.wgs84Sphere.haversineDistance(P1, P2);
+    output_distance=0.5399568*(Math.round(output_distance / 1000 * 100) / 100);
     output_distance = parseFloat(output_distance).toFixed(2);
-
     var output="距离:"+output_distance+'海里'+'<br/>'+"方位:"+last_azimuth+'°<a onclick=clearMeaure() onmouseover="changeMouseStyle(true)" onmouseout="changeMouseStyle(false)">✖</a>';
     return output;
     //mapElement.measureTooltipElement.innerHTML = output;

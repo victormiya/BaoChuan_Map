@@ -52,26 +52,17 @@ function layerinit()
     //绘制图层
     Source.drawSource=new ol.source.Vector();
     Layer.drawLayer=new ol.layer.Vector({
-        source: Source.drawSource,
-        style: new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(255, 255, 255, 0.2)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: 'rgba(255, 0, 0)',
-                width: 2
-            })
-        })
+        source: Source.drawSource
     });
     //临时标注图层
 
     //矢量船图层
 
-
-    Layer.ship = new ol.layer.Tile({
+    //栅格船图层
+    Layer.wmsship = new ol.layer.Tile({
         source: new ol.source.TileWMS({
-            url: 'http://112.126.89.175:8080/geoserver/gwc/service/wms',
             //url: 'http://112.126.89.175:8080/geoserver/gwc/service/wms',
+            url: 'http://112.126.89.175:8080/geoserver/ships/wms',
             params: {'FORMAT': 'image/png',
                 'VERSION': '1.1.1',
                 tiled: true,
@@ -80,34 +71,11 @@ function layerinit()
             }
         })
     });
+    //台风图层
+
 }
 
 //余位补齐
 function padLeft(num, val) {
     return (new Array(num).join('0') + val).slice(-num);
-}
-
-function test()
-{
-    $.ajax({
-        url:'a.json',
-        type:'get',
-        success:function(data) {
-            var line=[];
-            //='0'的是当前卫星点
-            var arr=data.result.filter(function(item,index){
-                return item.timeDif==='0'
-            });
-            //>0是预报点
-            for(var i=0;i<arr.length;i++) {
-                line.push(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
-                mapOverLay.taifeng.setPosition(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
-            }
-            var feature=new ol.Feature({
-                geometry:new ol.geom.LineString(line)
-            });
-            Source.drawSource.addFeature(feature);
-        }
-    });
-
 }

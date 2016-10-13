@@ -9,7 +9,7 @@ function init() {
         controls: [],
         layers: [
             Layer.sateLayer, Layer.streetLayer,Layer.haiTuLayer,
-            Layer.measureLayer,Layer.ship,Layer.drawLayer
+            Layer.measureLayer,Layer.wmsship,Layer.drawLayer
         ],
         target: 'map',
         overlays: [mapOverLay.measureTooltip, mapOverLay.measureHelpTooltip,
@@ -27,7 +27,9 @@ function init() {
         undefinedHTML: '&nbsp;'
     });
     map.getView().on('change:resolution', function(evt) {
+        console.log(map.getView().getZoom());
         var resolution = evt.target.get('resolution');
+        console.log(resolution);
         var units = map.getView().getProjection().getUnits();
         var dpi = 25.4 / 0.28;
         var mpu = ol.proj.METERS_PER_UNIT[units];
@@ -51,7 +53,6 @@ function init() {
         tipLabel:'全屏'
     });
     map.addControl(fullcontrol);
-    test();
 }
 
 

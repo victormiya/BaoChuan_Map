@@ -5,32 +5,40 @@ function setToolBar(){
   
 	//平移
     $("#btnPan").click(function () {
-        buttoninit();
+
     });
 
     //测量
     $("#btnMeasure").click(function () {
-        buttoninit();
-        measureLength();
+        measureDistance();
     });
     //测面
     $("#btnMeasureArea").click(function () {
-        buttoninit();
         measureArea();
     });
+
+    //电子方位角
+    $("#btnangle").click(function () {
+        measurePosition();
+    });
+
+    //展示20万船
+    $("#btn20万").click(function () {
+
+    });
+
+    //测试台风
+    $("#btntaifeng").click(function () {
+        showTaiFeng();
+    });
+
+
+
 	$("btnClass").tooltip();
 };
 
 
-function buttoninit()
-{
-    //移除测量移动提示
-    map.un('pointermove', measureMoveHandler);
-    //移除测量
-    map.removeInteraction(measureinteraction);
-    mapOverLay.measureHelpTooltip.setPosition(undefined);
 
-}
 
 
 
