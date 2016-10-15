@@ -39,12 +39,15 @@ function setToolBar(){
         switch(lable){
             case '谷歌街道图':
                 baseMapSwitch(baseMap.streetMap);
+
                 break;
             case '谷歌卫星图':
                 baseMapSwitch(baseMap.sateMap);
+
                 break;
             case '海图':
                 baseMapSwitch(baseMap.ocean);
+
                 break;
         }
     });

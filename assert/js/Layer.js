@@ -58,30 +58,29 @@ function layerinit()
     Layer.drawLayer=new ol.layer.Vector({
         source: Source.drawSource
     });
-    var coor=[[-150,30],[-160,30],[170,10],[-170,30],[170,30],[160,30]];
-    var arr=coor.filter(function(item,index){
-        if(index>0){
-            if((item[0]-coor[index-1][0])<-180)
-                item[0]+=360;
-            else if((item[0]-coor[index-1][0])>180)
-                item[0]-=360;
-        }
-        return item;
-    });
-    console.log(arr);
-    arr=arr.map(function(item,index){
-        var a=ol.proj.fromLonLat(item);
-        //console.log(a);
-        return a;
-    })
-    console.log(arr);
-    var line=new ol.geom.LineString(arr);
-   var feature=new ol.Feature({geometry:line});
-    Source.drawSource.addFeature(feature);
     //临时标注图层
 
     //矢量船图层
-
+    Layer.shipAll=new ol.layer.Vector({
+        source:  new ol.source.Vector({
+            format: new ol.format.GeoJSON(),
+            url: function(extent) {
+                return 'http://112.126.89.175:8080/geoserver/wfs?service=WFS&' +
+                    'version=1.1.0&request=GetFeature&typename=ships:ta_pos_latest_new&' +
+                    'outputFormat=application/json&srsname=EPSG:3857&' +
+                    'bbox=' + extent.join(',') + ',EPSG:3857';
+            },
+            strategy: ol.loadingstrategy.bbox
+        }),
+        style: new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 7,
+                fill: new ol.style.Fill({
+                    color: '#ffcc33'
+                })
+            })
+        })
+    });
     //栅格船图层
     Layer.wmsship = new ol.layer.Tile({
         source: new ol.source.TileWMS({

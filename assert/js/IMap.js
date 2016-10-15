@@ -19,8 +19,9 @@ var baseMap={
 //海图，街道图，卫星图切换
 function baseMapSwitch(basemap)
 {
+    console.log(basemap);
     switch(basemap){
-        case baseMap.sateMap:
+        case baseMap.streetMap:
             Layer.streetLayer.setVisible(true);
             Layer.sateLayer.setVisible(false);
             Layer.haiTuLayer.setVisible(false);

@@ -39,7 +39,7 @@ function init() {
         undefinedHTML: '&nbsp;'
     });
     map.getView().on('change:resolution', function(evt) {
-        //console.log(map.getView().getZoom());
+        var zoom=map.getView().getZoom();
         var resolution = evt.target.get('resolution');
         var units = map.getView().getProjection().getUnits();
         var dpi = 25.4 / 0.28;
@@ -53,6 +53,22 @@ function init() {
             scale = Math.round(scale);
         }
         document.getElementById('scale').innerHTML = "Scale = 1 : " + scale;
+        if(zoom>10)//地图缩放等级超过10后，就切换 矢量图层
+        {
+
+            if(hasLayerInMap(Layer.wmsship))
+                map.removeLayer(Layer.wmsship);
+            if(!hasLayerInMap(Layer.shipAll))
+                map.addLayer(Layer.shipAll);
+        }
+        else
+        {
+            if(hasLayerInMap(Layer.shipAll))
+                map.removeLayer(Layer.shipAll);
+            if(!hasLayerInMap(Layer.wmsship))
+                map.addLayer(Layer.wmsship);
+        }
+
     });
     var zoomControl=new ol.control.Zoom({zoomInTipLabel:'放 大',zoomOutTipLabel:'缩 小'});
     map.addControl(zoomControl);
