@@ -40,9 +40,16 @@ function showTaiFeng()
                 return item.timeDif==='0'
             });
             //>0是预报点
+            var taifengArr=[];
             for(var i=0;i<arr.length;i++) {
                 line.push(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
-                mapOverLay.taifeng.setPosition(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
+                //mapOverLay.taifeng.setPosition(ol.proj.fromLonLat([arr[i].lon, arr[i].lat]));
+                taifengArr.push({
+                    current:arr[i],
+                    yubao:data.result.filter(function(item,index){
+                        return item.timeDif!=='0'&&item.typhoonTime==arr[i].typhoonTime&&item!==arr[i] //找到与当前点时间一致的
+                    })
+                });
             }
             var feature=new ol.Feature({
                 geometry:new ol.geom.LineString(line)
@@ -93,8 +100,15 @@ function drawMark()
 //屏幕截图
 function mapPrint()
 {
-    _print();
-
+    var exportPNGElement=document.getElementById("export-png");
+    if ('download' in exportPNGElement) {
+        map.once('postcompose', function (event) {
+            var canvas = event.context.canvas;
+            exportPNGElement.href = canvas.toDataURL('image/png');
+            exportPNGElement.click();
+        });
+        map.renderSync();
+    }
 }
 //更新特定船舶实时位置
 function updateShipLocate(shipid,locate)
@@ -114,4 +128,16 @@ function hideShipbyCodes(shipCodes)
 
 }
 
-
+//20万船分布图展示或隐藏
+function showAllShips(visible){
+    if(visible)//加载20万船只分布图
+    {
+        if(!hasLayerInMap(Layer.wmsship))
+            map.addLayer(Layer.wmsship);
+    }
+    else
+    {
+        if(hasLayerInMap(Layer.wmsship))
+            map.removeLayer(Layer.wmsship);
+    }
+}

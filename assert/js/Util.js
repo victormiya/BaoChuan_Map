@@ -1,8 +1,5 @@
 //工具
-
 var tooltipCoord;
-
-
 function measureinit()
 {
     //移除测量移动提示
@@ -11,24 +8,6 @@ function measureinit()
     map.removeInteraction(measureinteraction);
     mapOverLay.measureHelpTooltip.setPosition(undefined);
 }
-
-
-
-
-//地图输出
-function _print()
-{
-    var exportPNGElement=document.getElementById("export-png");
-    if ('download' in exportPNGElement) {
-        map.once('postcompose', function (event) {
-            var canvas = event.context.canvas;
-            exportPNGElement.href = canvas.toDataURL('image/png');
-            exportPNGElement.click();
-        });
-        map.renderSync();
-    }
-}
-
 var measureVar={
     wgs84Sphere:new ol.Sphere(6378137),
     sketch:null,
@@ -227,6 +206,17 @@ function formatAzimuth(geom) {
     output_distance = parseFloat(output_distance).toFixed(2);
     var output="距离:"+output_distance+'海里'+'<br/>'+"方位:"+last_azimuth+'°<a onclick=clearMeaure() onmouseover="changeMouseStyle(true)" onmouseout="changeMouseStyle(false)">✖</a>';
     return output;
-    //mapElement.measureTooltipElement.innerHTML = output;
-    //mapOverLay.measureTooltip.setPosition(lastcoord);
+}
+
+
+//判定图层是否存在map
+//判断当前图层是否存在地图中
+function hasLayerInMap(layer){
+    var layers=map.getLayers();
+    for(var i=0;i<layers.getLength();i++){
+        var item=layers.item(i);
+        if(item===layer)
+            return true;
+    }
+    return false;
 }

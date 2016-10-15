@@ -8,7 +8,7 @@ function init() {
     map = new ol.Map({
         controls: [],
         layers: [
-            Layer.sateLayer, Layer.streetLayer,Layer.haiTuLayer,
+            Layer.streetLayer,Layer.sateLayer,Layer.haiTuLayer,
             Layer.measureLayer,Layer.wmsship,Layer.drawLayer
         ],
         target: 'map',

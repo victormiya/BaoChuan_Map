@@ -6,6 +6,7 @@ function layerinit()
     Layer.streetLayer=new ol.layer.Tile({
         visible: true,
         source: new ol.source.XYZ({
+            crossOrigin: 'anonymous',
             url: 'http://www.google.cn/maps/vt?pb=!1m5!1m4!1i{z}!2i{x}!3i{y}!4i256!2m3!1e0!2sm!3i342009817!3m9!2szh-CN!3sCN!5e18!12m1!1e47!12m3!1e37!2m1!1ssmartmaps!4e0&token=32965'
         })
     });
@@ -15,11 +16,13 @@ function layerinit()
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.XYZ({
+                    crossOrigin: 'anonymous',
                     url: 'http://mt{0-1}.google.cn/maps/vt?lyrs=s@198&hl=zh-CN&gl=CN&&x={x}&y={y}&z={z}'
                 })
             }),
             new ol.layer.Tile({
                 source: new ol.source.XYZ({
+                    crossOrigin: 'anonymous',
                     url: 'http://www.google.cn/maps/vt?pb=!1m5!1m4!1i{z}!2i{x}!3i{y}!4i256!2m3!1e0!2sm!3i342009253!3m9!2szh-CN!3sCN!5e18!12m1!1e50!12m3!1e37!2m1!1ssmartmaps!4e0&token=2064'
                 })
             })
@@ -29,6 +32,7 @@ function layerinit()
     Layer.haiTuLayer= new ol.layer.Tile({
         visible:false,
         source: new ol.source.XYZ({
+            crossOrigin: 'anonymous',
             tileUrlFunction: function (xyz, obj1, obj2) {
                 if (!xyz) {
                     return "";
@@ -61,8 +65,8 @@ function layerinit()
     //栅格船图层
     Layer.wmsship = new ol.layer.Tile({
         source: new ol.source.TileWMS({
-            //url: 'http://112.126.89.175:8080/geoserver/gwc/service/wms',
-            url: 'http://112.126.89.175:8080/geoserver/ships/wms',
+            crossOrigin: 'anonymous',
+            url: 'http://112.126.89.175:8080/geoserver/gwc/service/wms',
             params: {'FORMAT': 'image/png',
                 'VERSION': '1.1.1',
                 tiled: true,
@@ -72,7 +76,36 @@ function layerinit()
         })
     });
     //台风图层
+    Source.taifeng=new ol.source.Vector();
+    Layer.taifeng=new ol.layer.Vector({
+        source: Source.taifeng,
+        style: function(feature,res){
+            var geom = feature.getGeometry();
+            var timeDif=parseInt(feature.get('timeDif'));
+            switch(geom.getType())
+            {
+                case 'Point':
+                    if(timeDif==0)//当前点
+                    {
 
+                    }
+                    else//预报点
+                    {
+
+                    }
+                    break;
+                case 'LineString':
+                    if(timeDif==0)
+                    {
+
+                    }else
+                    {
+
+                    }
+                    break;
+            }
+        }
+    });
 }
 
 //余位补齐

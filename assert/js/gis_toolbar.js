@@ -24,12 +24,35 @@ function setToolBar(){
 
     //展示20万船
     $("#btn20万").click(function () {
-
+        showAllShips(true);
+    });
+    $("#btnprint").click(function () {
+        mapPrint();
     });
 
     //测试台风
     $("#btntaifeng").click(function () {
         showTaiFeng();
+    });
+    $("#layerselect").change(function (e) {
+        var lable= e.currentTarget.selectedOptions[0].text;
+        switch(lable){
+            case '谷歌街道图':
+                Layer.streetLayer.setVisible(true);
+                Layer.sateLayer.setVisible(false);
+                Layer.haiTuLayer.setVisible(false);
+                break;
+            case '谷歌卫星图':
+                Layer.streetLayer.setVisible(false);
+                Layer.sateLayer.setVisible(true);
+                Layer.haiTuLayer.setVisible(false);
+                break;
+            case '海图':
+                Layer.streetLayer.setVisible(false);
+                Layer.sateLayer.setVisible(false);
+                Layer.haiTuLayer.setVisible(true);
+                break;
+        }
     });
 
 
