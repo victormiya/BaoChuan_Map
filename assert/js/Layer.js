@@ -58,6 +58,26 @@ function layerinit()
     Layer.drawLayer=new ol.layer.Vector({
         source: Source.drawSource
     });
+    var coor=[[-150,30],[-160,30],[170,10],[-170,30],[170,30],[160,30]];
+    var arr=coor.filter(function(item,index){
+        if(index>0){
+            if((item[0]-coor[index-1][0])<-180)
+                item[0]+=360;
+            else if((item[0]-coor[index-1][0])>180)
+                item[0]-=360;
+        }
+        return item;
+    });
+    console.log(arr);
+    arr=arr.map(function(item,index){
+        var a=ol.proj.fromLonLat(item);
+        //console.log(a);
+        return a;
+    })
+    console.log(arr);
+    var line=new ol.geom.LineString(arr);
+   var feature=new ol.Feature({geometry:line});
+    Source.drawSource.addFeature(feature);
     //临时标注图层
 
     //矢量船图层
@@ -80,30 +100,13 @@ function layerinit()
     Layer.taifeng=new ol.layer.Vector({
         source: Source.taifeng,
         style: function(feature,res){
-            var geom = feature.getGeometry();
+            var style;
             var timeDif=parseInt(feature.get('timeDif'));
-            switch(geom.getType())
-            {
-                case 'Point':
-                    if(timeDif==0)//当前点
-                    {
-
-                    }
-                    else//预报点
-                    {
-
-                    }
-                    break;
-                case 'LineString':
-                    if(timeDif==0)
-                    {
-
-                    }else
-                    {
-
-                    }
-                    break;
-            }
+            if(timeDif==0)//当前点
+                style=typhoonStyle;
+            else//预报点
+                style=typhoonFutureStyle;
+            return [style];
         }
     });
 }

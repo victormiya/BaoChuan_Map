@@ -38,19 +38,13 @@ function setToolBar(){
         var lable= e.currentTarget.selectedOptions[0].text;
         switch(lable){
             case '谷歌街道图':
-                Layer.streetLayer.setVisible(true);
-                Layer.sateLayer.setVisible(false);
-                Layer.haiTuLayer.setVisible(false);
+                baseMapSwitch(baseMap.streetMap);
                 break;
             case '谷歌卫星图':
-                Layer.streetLayer.setVisible(false);
-                Layer.sateLayer.setVisible(true);
-                Layer.haiTuLayer.setVisible(false);
+                baseMapSwitch(baseMap.sateMap);
                 break;
             case '海图':
-                Layer.streetLayer.setVisible(false);
-                Layer.sateLayer.setVisible(false);
-                Layer.haiTuLayer.setVisible(true);
+                baseMapSwitch(baseMap.ocean);
                 break;
         }
     });

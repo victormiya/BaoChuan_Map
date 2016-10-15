@@ -1,6 +1,6 @@
 ﻿var map;
 var geoserverhost='http://192.168.0.67:8090/geoserver';
-var geojsonFormat=new ol.format.GeoJSON({defaultDataProjection:'epsg:2364'});
+var geojsonFormat=new ol.format.GeoJSON({defaultDataProjection:'epsg:3857'});
 function init() {
     setToolBar();
     overlayInit();
@@ -9,7 +9,7 @@ function init() {
         controls: [],
         layers: [
             Layer.streetLayer,Layer.sateLayer,Layer.haiTuLayer,
-            Layer.measureLayer,Layer.wmsship,Layer.drawLayer
+            Layer.measureLayer,Layer.wmsship,Layer.taifeng,Layer.drawLayer
         ],
         target: 'map',
         overlays: [mapOverLay.measureTooltip, mapOverLay.measureHelpTooltip,
@@ -19,6 +19,18 @@ function init() {
             zoom: 2
         })
     });
+    var select=new ol.interaction.Select({
+        condition: ol.events.condition.pointerMove,
+        layers:[Layer.taifeng],
+        filter:function(_feature){
+            return _feature.getGeometry().getType()=='Point'
+        }
+    });
+    select.on('select',function(e){
+        showPopup(e.selected[0]);
+    });
+    map.addInteraction(select);
+
     var mousePositionControl = new ol.control.MousePosition({
         coordinateFormat: ol.coordinate.createStringXY(4),
         projection: 'EPSG:4326',
@@ -27,9 +39,8 @@ function init() {
         undefinedHTML: '&nbsp;'
     });
     map.getView().on('change:resolution', function(evt) {
-        console.log(map.getView().getZoom());
+        //console.log(map.getView().getZoom());
         var resolution = evt.target.get('resolution');
-        console.log(resolution);
         var units = map.getView().getProjection().getUnits();
         var dpi = 25.4 / 0.28;
         var mpu = ol.proj.METERS_PER_UNIT[units];

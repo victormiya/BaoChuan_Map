@@ -220,3 +220,35 @@ function hasLayerInMap(layer){
     }
     return false;
 }
+
+//根据台风点绘制 线点
+function drawTyphoon(typhoonpts,isFuture,istemp){
+    var typhoonLineFeatures=[];
+    var count=typhoonpts.length;
+    var _line=[];
+    for(var i=0;i<count;i++) {
+        var _coor=ol.proj.fromLonLat([typhoonpts[i].lon, typhoonpts[i].lat]);
+        var _geom=new ol.geom.Point(_coor);
+        var _feature=new ol.Feature();
+        _feature.setProperties(typhoonpts[i]);
+        _feature.setGeometry(_geom);
+        if(istemp)
+            _feature.set('temp',1);
+        typhoonLineFeatures.push(_feature);
+        _line.push(_coor);
+    }
+    //台风已经经过的线路
+    var timeDif;
+    if(isFuture)
+        timeDif=2;
+    else
+        timeDif=0;
+    var taifengLine=new ol.Feature({
+        timeDif:timeDif,
+        geometry:new ol.geom.LineString(_line)
+    });
+    if(istemp)
+        taifengLine.set('temp',1);
+    Source.taifeng.addFeature(taifengLine);
+    Source.taifeng.addFeatures(typhoonLineFeatures);
+}
