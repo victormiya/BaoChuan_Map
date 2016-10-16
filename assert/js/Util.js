@@ -146,7 +146,9 @@ function measureEnd(e)
         radiusFeature.setStyle(measureStyle);
         Source.measureSource.addFeature(radiusFeature);
     }
-        measureVar.sketch = null;
+    measureVar.sketch = null;
+    //关闭测量
+    measureinit();
 }
 
 //根据查询条件选项键值对，构造查询条件
