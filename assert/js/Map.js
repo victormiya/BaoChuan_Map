@@ -32,7 +32,12 @@ function init() {
     map.addInteraction(select);
 
     var mousePositionControl = new ol.control.MousePosition({
-        coordinateFormat: ol.coordinate.createStringXY(4),
+        coordinateFormat:function(coor){
+            if(coor[0]<-180)
+                coor[0]=coor[0]+360;
+            coor=[coor[0]%180,coor[1]];
+            return ol.coordinate.createStringXY(4)(coor);
+        },
         projection: 'EPSG:4326',
         className: 'custom-mouse-position',
         target: document.getElementById('location'),
