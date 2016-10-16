@@ -16,7 +16,13 @@ function overlayInit()
         offset: [15, 0],
         positioning: 'center-left'
     });
-	
+	//台风
+    mapElement.taifengElement = document.getElementById('taifeng');
+    mapOverLay.taifeng = new ol.Overlay({
+        element: mapElement.taifengElement,
+        //offset: [0, -15],
+        positioning: 'center-center'
+    });
 
    var popupElement = document.getElementById('popup');
     mapElement.popupContentElement = document.getElementById('popup-content');
@@ -41,22 +47,46 @@ function closePopup()
     return false;
 }
 //显示popup信息
-function showPopup(coor,feature)
+function showPopup(feature)
 {
     if(feature==undefined) {
         closePopup();
         return;
     }
-    var properties=feature.get
-    var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-        coor, 'EPSG:3857', 'EPSG:4326'));
-    mapElement.popupContentElement.innerHTML = '<h3>宗地信息</h3><p>地籍号:'+feature.get('djh')+'</p>'+
-        '<p>通讯地址:'+feature.get('txdz')+'</p>'+
-        '<p>土地坐落:'+feature.get('tdzl')+'</p>'+
-        '<p>土地用途:'+feature.get('tdyt')+'</p>'+
-        '<p>实测面积:'+feature.get('scmj').toFixed(2)+'</p>'+
-        '<p>发证面积:'+feature.get('fzmj').toFixed(2)+'</p>'+
-        '<p>权利人:'+feature.get('bzzjrxm')+'</p>';
+    //删除临时台风点线
+    Source.taifeng.getFeatures().forEach(function(feature,index){
+        if(feature.get('temp')==1)
+            Source.taifeng.removeFeature(feature);
+    });
+    var coor=feature.getGeometry().getCoordinates();
+    var timeDif=parseInt(feature.get('timeDif'));
+    if(timeDif==0)
+    {
+        console.log(feature.get('yubao'));
+        mapElement.popupContentElement.innerHTML = '<h3>台风信息</h3>'+
+            '<p>台风名称:'+feature.get('enName')+'</p>'+
+            '<p>中心位置:'+feature.get('lon')+' E '+feature.get('lat')+' N</p>'+
+            '<p>最大风速:'+feature.get('maxWindSustain')+'（米/秒）</p>'+
+            '<p>最低气压:'+feature.get('airPressure')+'（百帕）</p>'+
+            '<p>移动方向:'+feature.get('moveDirection')+'</p>'+
+            '<p>移动速度:'+feature.get('moveSpeed')+'（公里/时）</p>';
+        //加载预报点
+        var temp=feature.get('yubao');
+        if(temp.length>0){
+            drawTyphoon(temp,true,true);
+        }
+    }
+    else
+    {
+        mapElement.popupContentElement.innerHTML = '<h3>台风信息</h3>'+
+            '<p>台风名称:'+feature.get('enName')+'</p>'+
+            '<p>预报时间:'+feature.get('typhoonTime')+'</p>'+
+            '<p>预报时效:'+feature.get('timeDif')+'小时</p>'+
+            '<p>到达时间:'+feature.get('typhoonForecastTime')+'</p>'+
+            '<p>最大风速:'+feature.get('maxWindSustain')+'（米/秒）</p>'+
+            '<p>最低气压:'+feature.get('airPressure')+'（百帕）</p>'+
+            '<p>移动方向:'+feature.get('moveDirection')+'</p>'+
+            '<p>移动速度:'+feature.get('moveSpeed')+'（公里/时）</p>';
+    }
     mapOverLay.popupOverlay.setPosition(coor);
-
 }

@@ -1,37 +1,13 @@
 //工具
-
 var tooltipCoord;
-
-//测量
-function measureLength() {
-    map.on('pointermove', measureMoveHandler);
-    addMeasureinteraction('LineString');
-}
-//测面
-function measureArea() {
-    map.on('pointermove', measureMoveHandler);
-    addMeasureinteraction('Polygon');
-}
-//测量电子方位角
-function measureAzimuth(){
-    map.on('pointermove', measureMoveHandler);
-    addMeasureinteraction('Circle');
-}
-
-//地图输出
-function print()
+function measureinit()
 {
-    var exportPNGElement=document.getElementById("export-png");
-    if ('download' in exportPNGElement) {
-        map.once('postcompose', function (event) {
-            var canvas = event.context.canvas;
-            exportPNGElement.href = canvas.toDataURL('image/png');
-            exportPNGElement.click();
-        });
-        map.renderSync();
-    }
+    //移除测量移动提示
+    map.un('pointermove', measureMoveHandler);
+    //移除测量
+    map.removeInteraction(measureinteraction);
+    mapOverLay.measureHelpTooltip.setPosition(undefined);
 }
-
 var measureVar={
     wgs84Sphere:new ol.Sphere(6378137),
     sketch:null,
@@ -111,7 +87,7 @@ var formatLength = function(line) {
 
         }
     } else {
-        length = Math.round(line.getLength() * 100) / 100;
+        length = line.getLength();
     }
     var output;
     if (length > 1000) {
@@ -223,15 +199,56 @@ function formatAzimuth(geom) {
     else if(deltaX==0&&deltaY<0)
         last_azimuth=180;
     last_azimuth = parseFloat(last_azimuth).toFixed(4);
-
-    P1 = ol.proj.transform(P1, sourceProj, 'EPSG:4326');
-    P2 = ol.proj.transform(P2, sourceProj, 'EPSG:4326');
-    var output_distance=wgs84Sphere.haversineDistance(P1, P2);
-    output_distance=0.5399568*output_distance;
+    P1=ol.proj.toLonLat(P1);
+    P2=ol.proj.toLonLat(P2);
+    var output_distance=measureVar.wgs84Sphere.haversineDistance(P1, P2);
+    output_distance=0.5399568*(Math.round(output_distance / 1000 * 100) / 100);
     output_distance = parseFloat(output_distance).toFixed(2);
-
     var output="距离:"+output_distance+'海里'+'<br/>'+"方位:"+last_azimuth+'°<a onclick=clearMeaure() onmouseover="changeMouseStyle(true)" onmouseout="changeMouseStyle(false)">✖</a>';
     return output;
-    //mapElement.measureTooltipElement.innerHTML = output;
-    //mapOverLay.measureTooltip.setPosition(lastcoord);
+}
+
+
+//判定图层是否存在map
+//判断当前图层是否存在地图中
+function hasLayerInMap(layer){
+    var layers=map.getLayers();
+    for(var i=0;i<layers.getLength();i++){
+        var item=layers.item(i);
+        if(item===layer)
+            return true;
+    }
+    return false;
+}
+
+//根据台风点绘制 线点
+function drawTyphoon(typhoonpts,isFuture,istemp){
+    var typhoonLineFeatures=[];
+    var count=typhoonpts.length;
+    var _line=[];
+    for(var i=0;i<count;i++) {
+        var _coor=ol.proj.fromLonLat([typhoonpts[i].lon, typhoonpts[i].lat]);
+        var _geom=new ol.geom.Point(_coor);
+        var _feature=new ol.Feature();
+        _feature.setProperties(typhoonpts[i]);
+        _feature.setGeometry(_geom);
+        if(istemp)
+            _feature.set('temp',1);
+        typhoonLineFeatures.push(_feature);
+        _line.push(_coor);
+    }
+    //台风已经经过的线路
+    var timeDif;
+    if(isFuture)
+        timeDif=2;
+    else
+        timeDif=0;
+    var taifengLine=new ol.Feature({
+        timeDif:timeDif,
+        geometry:new ol.geom.LineString(_line)
+    });
+    if(istemp)
+        taifengLine.set('temp',1);
+    Source.taifeng.addFeature(taifengLine);
+    Source.taifeng.addFeatures(typhoonLineFeatures);
 }

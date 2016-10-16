@@ -5,32 +5,60 @@ function setToolBar(){
   
 	//平移
     $("#btnPan").click(function () {
-        buttoninit();
+
     });
 
     //测量
     $("#btnMeasure").click(function () {
-        buttoninit();
-        measureLength();
+        measureDistance();
     });
     //测面
     $("#btnMeasureArea").click(function () {
-        buttoninit();
         measureArea();
     });
+
+    //电子方位角
+    $("#btnangle").click(function () {
+        measurePosition();
+    });
+
+    //展示20万船
+    $("#btn20万").click(function () {
+        showAllShips(true);
+    });
+    $("#btnprint").click(function () {
+        mapPrint();
+    });
+
+    //测试台风
+    $("#btntaifeng").click(function () {
+        showTaiFeng();
+    });
+    $("#layerselect").change(function (e) {
+        var lable= e.currentTarget.selectedOptions[0].text;
+        switch(lable){
+            case '谷歌街道图':
+                baseMapSwitch(baseMap.streetMap);
+
+                break;
+            case '谷歌卫星图':
+                baseMapSwitch(baseMap.sateMap);
+
+                break;
+            case '海图':
+                baseMapSwitch(baseMap.ocean);
+
+                break;
+        }
+    });
+
+
+
 	$("btnClass").tooltip();
 };
 
 
-function buttoninit()
-{
-    //移除测量移动提示
-    map.un('pointermove', measureMoveHandler);
-    //移除测量
-    map.removeInteraction(measureinteraction);
-    mapOverLay.measureHelpTooltip.setPosition(undefined);
 
-}
 
 
 
