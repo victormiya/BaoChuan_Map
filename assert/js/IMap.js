@@ -72,7 +72,7 @@ function showTaiFeng()
             });
             arr.forEach(function(item,index){
                 item.yubao=data.result.filter(function(item1,index){
-                    return item1.timeDif!=='0'&&item1.typhoonTime==item.typhoonTime&&item1!==item //找到与当前点时间一致的
+                    return item1.typhoonTime==item.typhoonTime //找到与当前点时间一致的
                 })
             });
             //绘制当前台风经过的实际点线
