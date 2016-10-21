@@ -116,6 +116,9 @@ function hideTaiFeng()
     var overlayers=map.getOverlays();
     for(var i=0;i<overlayers.getLength();i++){
         var item=overlayers.item(i);
+        var id=item.getId();
+        if(id===undefined)
+            continue;
         if(item.getId().indexOf('taifeng')>-1){
             map.removeOverlay(item);
             var elemetn=item.getElement();
