@@ -15,6 +15,15 @@ var baseMap={
     海温:7,
     能见度:8
 };*/
+//点线面测试绘制样式
+var drawStyleType={
+    测试点1:1,
+    测试点2:2,
+    测试线1:3,
+    测试线2:4,
+    测试面1:5,
+    测试面2:6
+}
 
 //海图，街道图，卫星图切换
 function baseMapSwitch(basemap)
@@ -80,7 +89,8 @@ function showTaiFeng()
             var current=arr[arr.length-1];
             //最后一个点是当前台风点
             var center=ol.proj.fromLonLat([current.lon, current.lat]);
-            mapOverLay.taifeng.setPosition(center);
+            createTyphoonOverlay();
+            mapOverLay.TyphoonOverlay.setPosition(center);
             //显示最后一个点的预报点和线路
             var yubao=current.yubao;
             drawTyphoon(yubao,true);
@@ -103,6 +113,17 @@ function showTaiFeng()
 function hideTaiFeng()
 {
     Layer.taifeng.setVisible(false);
+    var overlayers=map.getOverlays();
+    for(var i=0;i<overlayers.getLength();i++){
+        var item=overlayers.item(i);
+        if(item.getId().indexOf('taifeng')>-1){
+            map.removeOverlay(item);
+            var elemetn=item.getElement();
+            elemetn.parentNode.removeChild(elemetn);
+        }
+
+    }
+
 }
 
 //测量方位
