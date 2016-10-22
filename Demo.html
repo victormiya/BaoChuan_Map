@@ -27,7 +27,6 @@
     <script src="assert/js/Util.js"></script>
 </head>
 <body onload="init()">
-    <div id="taifeng"></div>
     <div id="map">
         <div id="popup" class="ol-popup">
             <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -48,6 +47,16 @@
                 <option value="streetmap">谷歌街道图</option>
                 <option value="weitu">谷歌卫星图</option>
                 <option value="haitu">海图</option>
+            </select>
+            <select id="weatherelect">
+                <option value="pressureLayer">气压</option>
+                <option value="_500MBLayer">500MB</option>
+                <option value="windLayer">风</option>
+                <option value="waveHeightLayer">浪高</option>
+                <option value="swellLayer">涌</option>
+                <option value="currentLayer">洋流</option>
+                <option value="seaTempLayer">海温</option>
+                <option value="visibilityLayer">能见度</option>
             </select>
             <button id="btnangle">电子方位角</button>
             <button id="btn20万">20万船</button>

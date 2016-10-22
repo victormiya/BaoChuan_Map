@@ -5,21 +5,29 @@ var baseMap={
     sateMap:3
 };
 //气象类型
-/*var weatheaType={
-    气压:1,
-    500mb:2,
-    风:3,
-    浪高:4,
-    涌:5,
-    洋流:6,
-    海温:7,
-    能见度:8
-};*/
+var weatheaType={
+    pressureLayer:1,
+    _500MBLayer:2,
+    windLayer:3,
+    waveHeightLayer:4,
+    swellLayer:5,
+    currentLayer:6,
+    seaTempLayer:7,
+    visibilityLayer:8
+};
+//点线面测试绘制样式
+var drawStyleType={
+    测试点1:1,
+    测试点2:2,
+    测试线1:3,
+    测试线2:4,
+    测试面1:5,
+    测试面2:6
+}
 
 //海图，街道图，卫星图切换
 function baseMapSwitch(basemap)
 {
-    console.log(basemap);
     switch(basemap){
         case baseMap.streetMap:
             Layer.streetLayer.setVisible(true);
@@ -40,15 +48,12 @@ function baseMapSwitch(basemap)
 }
 
 //叠加气象信息
-function showWeatherLayer(weatheatype)
+//visible是气象可见度
+function showWeatherLayer(weatheatype,visible)
 {
 
 }
-//隐藏气象信息
-function hideWeatherLayer()
-{
 
-}
 
 //绘制台风图层
 function showTaiFeng()
@@ -80,7 +85,8 @@ function showTaiFeng()
             var current=arr[arr.length-1];
             //最后一个点是当前台风点
             var center=ol.proj.fromLonLat([current.lon, current.lat]);
-            mapOverLay.taifeng.setPosition(center);
+            createTyphoonOverlay();
+            mapOverLay.TyphoonOverlay.setPosition(center);
             //显示最后一个点的预报点和线路
             var yubao=current.yubao;
             drawTyphoon(yubao,true);
@@ -103,6 +109,20 @@ function showTaiFeng()
 function hideTaiFeng()
 {
     Layer.taifeng.setVisible(false);
+    var overlayers=map.getOverlays();
+    for(var i=0;i<overlayers.getLength();i++){
+        var item=overlayers.item(i);
+        var id=item.getId();
+        if(id===undefined)
+            continue;
+        if(item.getId().indexOf('taifeng')>-1){
+            map.removeOverlay(item);
+            var elemetn=item.getElement();
+            elemetn.parentNode.removeChild(elemetn);
+        }
+
+    }
+
 }
 
 //测量方位

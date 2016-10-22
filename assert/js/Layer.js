@@ -27,12 +27,36 @@ function layerinit()
                 })
             })
         ]
-    })
+    });
+
+
+
     //海图
+    var projection = new ol.proj.get("EPSG:3857");
+    var projectionExtent = projection.getExtent();
+    var height = ol.extent.getHeight(projectionExtent);
+    var width = ol.extent.getWidth(projectionExtent);
+    var tileSize = [256,256];
+    var maxResolution = Math.max(width / tileSize[0], height / tileSize[1]);
+    var length = 18 + 1;
+    var resolutions = new Array(length);
+    for (var z = 0; z < length; ++z) {
+        resolutions[z] = maxResolution / Math.pow(2, z);
+    }
+    var tilegrid = new ol.tilegrid.TileGrid({
+        origin: [projectionExtent[0]+1450,projectionExtent[3]+22500],
+        tileSize:tileSize,
+        resolutions: resolutions
+    });
+
+
     Layer.haiTuLayer= new ol.layer.Tile({
         visible:false,
+        extent: projectionExtent,
         source: new ol.source.XYZ({
-            crossOrigin: 'anonymous',
+            //crossOrigin: 'anonymous',
+            projection: projection,
+            tileGrid: tilegrid,
             tileUrlFunction: function (xyz, obj1, obj2) {
                 if (!xyz) {
                     return "";
@@ -52,6 +76,70 @@ function layerinit()
     Layer.measureLayer=new ol.layer.Vector({
         source: Source.measureSource,
         style: measureStyle
+    });
+    //风
+    Layer.windLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/Wind_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //气压
+    Layer.pressureLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/Pressure_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //500mb
+    Layer._500MBLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/500MB_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //浪高
+    Layer.waveHeightLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/WaveHeight_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //涌
+    Layer.swellLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/Swell_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //洋流
+    Layer.currentLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/Current_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //海温
+    Layer.seaTempLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/SeaTemp_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
+    });
+    //海温
+    Layer.visibilityLayer=new ol.layer.Tile({
+        visible: true,
+        source: new ol.source.XYZ({
+            //crossOrigin: 'anonymous',
+            url: 'http://218.241.183.164:7919/Visibility_20161021_00_20161021_00?REQUEST=GetTile&X={x}&Y={y}&Z={z}'
+        })
     });
     //绘制图层
     Source.drawSource=new ol.source.Vector();
@@ -81,6 +169,7 @@ function layerinit()
             })
         })
     });
+
     //栅格船图层
     Layer.wmsship = new ol.layer.Tile({
         source: new ol.source.TileWMS({
@@ -90,7 +179,7 @@ function layerinit()
                 'VERSION': '1.1.1',
                 tiled: true,
                 STYLES: '',
-                LAYERS: 'ships:ta_pos_latest_new',
+                LAYERS: 'ships:ta_pos_latest_new'
             }
         })
     });

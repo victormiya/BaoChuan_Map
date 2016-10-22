@@ -20,7 +20,6 @@ function overlayInit()
     mapElement.taifengElement = document.getElementById('taifeng');
     mapOverLay.taifeng = new ol.Overlay({
         element: mapElement.taifengElement,
-        //offset: [0, -15],
         positioning: 'center-center'
     });
 
@@ -37,6 +36,21 @@ function overlayInit()
     }));
 
 }
+
+/**
+ * 创建一个台风overlay
+ * */
+function createTyphoonOverlay() {
+    mapElement.TyphoonElement = document.createElement('div');
+    mapElement.TyphoonElement.className = 'taifeng';
+    mapOverLay.TyphoonOverlay = new ol.Overlay({
+        id:'taifeng_'+uuid(),
+        element: mapElement.TyphoonElement,
+        positioning: 'center-center'
+    });
+    map.addOverlay(mapOverLay.TyphoonOverlay);
+}
+
 
 
 //关闭显示信息
