@@ -5,7 +5,7 @@ function setToolBar(){
   
 	//平移
     $("#btnPan").click(function () {
-
+        hideTaiFeng();
     });
 
     //测量
@@ -51,7 +51,35 @@ function setToolBar(){
                 break;
         }
     });
-
+    $("#weatherelect").change(function (e) {
+        var lable= e.currentTarget.selectedOptions[0].text;
+        switch(lable){
+            case '气压':
+                weatheaType(baseMap.streetMap);
+                break;
+            case '500MB':
+                weatheaType(baseMap.sateMap);
+                break;
+            case '风':
+                weatheaType(baseMap.ocean);
+                break;
+            case '浪高':
+                weatheaType(baseMap.ocean);
+                break;
+            case '涌':
+                weatheaType(baseMap.ocean);
+                break;
+            case '洋流':
+                weatheaType(baseMap.ocean);
+                break;
+            case '海温':
+                weatheaType(baseMap.ocean);
+                break;
+            case '能见度':
+                weatheaType(baseMap.ocean);
+                break;
+        }
+    });
 
 
 	$("btnClass").tooltip();

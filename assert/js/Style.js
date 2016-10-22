@@ -64,3 +64,31 @@ var liefengStyle=new ol.style.Style({
         width: 2
     })
 });
+
+//标注样式
+var drawGeomStyleFunction=function(feature,resolution){
+    var type=feature.get('type');
+    switch(type){
+        case drawStyleType['测试点1']:
+
+            break;
+        case drawStyleType['测试点2']:
+
+            break;
+        case drawStyleType['测试线1']:
+
+            break;
+        case drawStyleType['测试线2']:
+
+            break;
+        case drawStyleType['测试面1']:
+
+            break;
+        case drawStyleType['测试面2']:
+
+            break;
+    }
+}
+
+
+
